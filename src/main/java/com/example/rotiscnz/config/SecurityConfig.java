@@ -30,13 +30,23 @@ public class SecurityConfig {
             "/swagger-ui/**",
             "/swagger-resources/*",
     };
+    private static final String[] AUTHORITY_LIST = {
+            "/items/save",
+            "/category/create",
+    };
+    private static final String[] ALLOWED_ALL = {
+            "/items/get-items",
+            "/category/get-categories",
+            "items/get-item/**",
+    };
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http.csrf(AbstractHttpConfigurer::disable)
                 .cors(Customizer.withDefaults())
                 .authorizeRequests()
                 .requestMatchers(AUTH_WHITELIST).permitAll()
-                .requestMatchers("/items/save").hasAuthority("ADMINISTRATOR")
+                .requestMatchers(AUTHORITY_LIST).hasAuthority("ADMINISTRATOR")
+                .requestMatchers(ALLOWED_ALL).permitAll()
                 .requestMatchers(PathRequest.toStaticResources().atCommonLocations()).permitAll()
                 .anyRequest()
                 .authenticated()

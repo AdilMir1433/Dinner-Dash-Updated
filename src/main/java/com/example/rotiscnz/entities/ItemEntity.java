@@ -32,6 +32,9 @@ public class ItemEntity {
     private double price;
     @OneToMany(mappedBy = "itemByItemId")
     private Set<CartItemEntity> cartItemsById;
+    @Basic
+    @Column(name = "category_id")
+    private String categoryID;
 //
 //    public int getId() {
 //        return id;

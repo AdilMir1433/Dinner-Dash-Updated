@@ -9,10 +9,7 @@ import java.util.List;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class ItemCreateDTO {
-    private String title;
-    private String description;
-    private String itemPhoto;
-    private double price;
-    private List<Integer> categoryID;
+public class ItemListResponseDTO {
+
+    private List<ItemResponseDTO> itemResponseDTOS;
 }

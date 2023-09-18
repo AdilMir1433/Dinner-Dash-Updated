@@ -13,13 +13,17 @@ import java.util.Objects;
 @Entity
 @Table(name = "category", schema = "dinner_dash", catalog = "")
 public class CategoryEntity {
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.AUTO)
     @Id
     @Column(name = "id")
     private int id;
     @Basic
     @Column(name = "category_name")
     private String categoryName;
+
+    @Basic
+    @Column(name = "category_photo")
+    private String categoryPhoto;
 //
 //    public int getId() {
 //        return id;
