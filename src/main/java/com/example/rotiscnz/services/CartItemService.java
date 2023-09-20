@@ -5,7 +5,9 @@ import com.example.rotiscnz.dtos.cartItemDTOs.CartItemCreateDTO;
 import com.example.rotiscnz.dtos.cartItemDTOs.CartItemListDTO;
 import com.example.rotiscnz.dtos.cartItemDTOs.CartItemMapperDTO;
 import com.example.rotiscnz.dtos.cartItemDTOs.CartItemResponseDTO;
+import com.example.rotiscnz.dtos.orderDTOs.OrderCreateDTO;
 import com.example.rotiscnz.entities.CartItemEntity;
+import com.example.rotiscnz.enums.OrderType;
 import com.example.rotiscnz.mappers.CartItemMapper;
 import com.example.rotiscnz.repositories.CartItemRepository;
 import lombok.AllArgsConstructor;
@@ -13,7 +15,9 @@ import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 @Service
@@ -21,12 +25,16 @@ import java.util.List;
 public class CartItemService {
     private final CartItemRepository repository;
     private final CartItemMapper mapper;
+    private final OrderService orderService;
 
     public ResponseDTO<CartItemResponseDTO> addItemToCart(CartItemCreateDTO cartItemCreateDTO){
-//        for (CartItemCreateDTO cartItemDTO:cartItemCreateDTO.getCartItemCreateDTO()) {
-            CartItemEntity cartItemEntity = CartItemMapperDTO.toCartItemEntityFromCartItemCreateDTO(cartItemCreateDTO);
-            repository.save(cartItemEntity);
-      //  }
+        CartItemEntity cartItemEntity = CartItemMapperDTO.toCartItemEntityFromCartItemCreateDTO(cartItemCreateDTO);
+        repository.save(cartItemEntity);
+        OrderCreateDTO orderCreateDTO = new OrderCreateDTO();
+        orderCreateDTO.setOrderTime(new Timestamp(System.currentTimeMillis()));
+        orderCreateDTO.setStatus(String.valueOf(OrderType.ORDERED));
+        orderCreateDTO.setCartID(cartItemCreateDTO.getCartByCartId());
+        orderService.saveOrder(orderCreateDTO);
         ResponseDTO<CartItemResponseDTO> responseDTO = new ResponseDTO<>();
         responseDTO.setResponseCode(0);
         responseDTO.setData(null);

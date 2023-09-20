@@ -14,7 +14,7 @@ import java.util.Objects;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-@Table(name = "order", schema = "dinner_dash", catalog = "")
+@Table(name = "orders", schema = "dinner_dash", catalog = "")
 public class OrderEntity {
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Id
@@ -27,6 +27,7 @@ public class OrderEntity {
 //    @Basic
 //    @Column(name = "status")
     private String status;
+    private Long cartID;
 }
 //    @ManyToOne
 //    @JoinColumn(name = "cart_id", referencedColumnName = "id", nullable = false)
