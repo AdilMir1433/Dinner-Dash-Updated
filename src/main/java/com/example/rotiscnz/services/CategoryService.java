@@ -2,6 +2,7 @@ package com.example.rotiscnz.services;
 
 import com.example.rotiscnz.dtos.ResponseDTO;
 import com.example.rotiscnz.dtos.categoryDTOs.CategoryCreateDTO;
+import com.example.rotiscnz.dtos.categoryDTOs.CategoryMapperDTO;
 import com.example.rotiscnz.dtos.categoryDTOs.CategoryResponseDTO;
 import com.example.rotiscnz.entities.CategoryEntity;
 import com.example.rotiscnz.mappers.CategoryMapper;
@@ -21,7 +22,7 @@ public class CategoryService extends BaseService{
     public ResponseDTO<CategoryResponseDTO> createCategory(CategoryCreateDTO createDTO){
         CategoryEntity categoryEntity = mapper.toCategoryEntityFromCategoryCreateDTO(createDTO);
         repository.save(categoryEntity);
-        CategoryResponseDTO categoryResponseDTO = mapper.toCategoryResponseDTOFromCategoryEntity(categoryEntity);
+        CategoryResponseDTO categoryResponseDTO = CategoryMapperDTO.toCategoryResponseDTOFromCategoryEntity(categoryEntity);
         ResponseDTO<CategoryResponseDTO> responseDTO = new ResponseDTO<>();
         responseDTO.setResponseCode(0);
         responseDTO.setData(categoryResponseDTO);
@@ -31,7 +32,7 @@ public class CategoryService extends BaseService{
         List<CategoryEntity> categoryEntities = repository.findAll();
         List<CategoryResponseDTO> categoryResponseDTOS = new ArrayList<>();
         for(CategoryEntity categoryEntity: categoryEntities){
-            CategoryResponseDTO categoryResponseDTO = mapper.toCategoryResponseDTOFromCategoryEntity(categoryEntity);
+            CategoryResponseDTO categoryResponseDTO = CategoryMapperDTO.toCategoryResponseDTOFromCategoryEntity(categoryEntity);
             categoryResponseDTOS.add(categoryResponseDTO);
         }
         ResponseDTO<List<CategoryResponseDTO>> responseDTO = new ResponseDTO<>();

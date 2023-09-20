@@ -16,7 +16,7 @@ public class CategoryEntity {
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Id
     @Column(name = "id")
-    private int id;
+    private Long id;
     @Basic
     @Column(name = "category_name")
     private String categoryName;
@@ -41,16 +41,16 @@ public class CategoryEntity {
 //        this.categoryName = categoryName;
 //    }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        CategoryEntity that = (CategoryEntity) o;
-        return id == that.id && Objects.equals(categoryName, that.categoryName);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(id, categoryName);
-    }
+//    @Override
+//    public boolean equals(Object o) {
+//        if (this == o) return true;
+//        if (o == null || getClass() != o.getClass()) return false;
+//        CategoryEntity that = (CategoryEntity) o;
+//        return id == that.id && Objects.equals(categoryName, that.categoryName);
+//    }
+//
+//    @Override
+//    public int hashCode() {
+//        return Objects.hash(id, categoryName);
+//    }
 }

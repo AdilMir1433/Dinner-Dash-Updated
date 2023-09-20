@@ -26,6 +26,11 @@ public class SecurityConfig {
     private static final String[] AUTH_WHITELIST = {
             "/user/login",
             "/user/signup",
+            "/items/get-items",
+            "/category/get-categories",
+            "items/get-item/**",
+            "/cart/**",
+            "/cart_item/**",
             "/api-docs",
             "/swagger-ui/**",
             "/swagger-resources/*",
@@ -34,11 +39,6 @@ public class SecurityConfig {
             "/items/save",
             "/category/create",
     };
-    private static final String[] ALLOWED_ALL = {
-            "/items/get-items",
-            "/category/get-categories",
-            "items/get-item/**",
-    };
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http.csrf(AbstractHttpConfigurer::disable)
@@ -46,7 +46,6 @@ public class SecurityConfig {
                 .authorizeRequests()
                 .requestMatchers(AUTH_WHITELIST).permitAll()
                 .requestMatchers(AUTHORITY_LIST).hasAuthority("ADMINISTRATOR")
-                .requestMatchers(ALLOWED_ALL).permitAll()
                 .requestMatchers(PathRequest.toStaticResources().atCommonLocations()).permitAll()
                 .anyRequest()
                 .authenticated()

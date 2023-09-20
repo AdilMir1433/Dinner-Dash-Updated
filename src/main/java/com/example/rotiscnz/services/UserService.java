@@ -1,5 +1,6 @@
 package com.example.rotiscnz.services;
 
+import com.example.rotiscnz.dtos.ModelToResponse;
 import com.example.rotiscnz.dtos.ResponseDTO;
 import com.example.rotiscnz.dtos.userDTOs.UserResponseDTO;
 import com.example.rotiscnz.dtos.userDTOs.UserSignUpDTO;
@@ -10,11 +11,13 @@ import com.example.rotiscnz.repositories.UserRepository;
 import com.example.rotiscnz.security.JWTUtility;
 import com.example.rotiscnz.utility.SessionData;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class UserService extends BaseService implements UserDetailsService {
@@ -33,6 +36,7 @@ public class UserService extends BaseService implements UserDetailsService {
      */
     @Override
     public UserEntity loadUserByUsername(String username) throws UsernameNotFoundException {
+        System.out.println("fetching user from repo");
         return userRepository
                 .findByEmail(username)
                 .orElseThrow(() -> new UsernameNotFoundException("User not found"));
@@ -40,25 +44,32 @@ public class UserService extends BaseService implements UserDetailsService {
 
     /**
      * Method to login user into app
-     * @param email: email of the user entered by user (String)
+     *
+     * @param email:    email of the user entered by user (String)
      * @param password: password entered by the user (String)
      * @return token: generated token is returned (String)
      */
     public ResponseDTO<UserResponseDTO> login(String email, String password) {
         UserEntity user = loadUserByUsername(email);
-        UserResponseDTO userResponseDTO = userMapper.toUSerResponseDTOFromUserEntity(user);
+        UserResponseDTO userResponseDTO = ModelToResponse.parseUserToResponse(user);
         sessionData.setUser(userResponseDTO);
         if (!passwordEncoder.matches(password, user.getPassword())) {
             return generateFailureResponse("User Name or Password Error");
         }
         String token = jwtUtility.generateToken(user);
         sessionData.setToken(token);
-        return generateSuccessResponseForLogin(token,userResponseDTO);
+        ResponseDTO<UserResponseDTO> responseDTO = new ResponseDTO<>();
+        responseDTO.setData(userResponseDTO);
+        responseDTO.setResponseCode(0);
+        responseDTO.setRefreshToken(token);
+        return responseDTO;
+        //return generateSuccessResponseForLogin(token, userResponseDTO);
     }
 
     /**
      * Method to load user details by email and password
-     * @param email: email of the user entered by user (String)
+     *
+     * @param email:    email of the user entered by user (String)
      * @param password: password entered by the user (String)
      * @return User: User details are returned (UserResponseDTO)
      */
@@ -70,28 +81,33 @@ public class UserService extends BaseService implements UserDetailsService {
             responseDTO.setErrorMessage("User Name or Password Error");
             return responseDTO;
         }
-        ResponseDTO<UserResponseDTO> userResponseDTOResponseDTO= new ResponseDTO<>();
-        UserResponseDTO userResponseDTO = userMapper.toUSerResponseDTOFromUserEntity(user);
+        ResponseDTO<UserResponseDTO> userResponseDTOResponseDTO = new ResponseDTO<>();
+        UserResponseDTO userResponseDTO = userMapper.toUserResponseDTOFromUserEntity(user);
         userResponseDTOResponseDTO.setData(userResponseDTO);
         userResponseDTOResponseDTO.setResponseCode(0);
         return userResponseDTOResponseDTO;
     }
+
     /**
      * Method to save user to database
+     *
      * @param user: User Data (UserResponseDTO)
      * @return User: User details are returned (UserResponseDTO)
      */
-    public ResponseDTO<UserResponseDTO> signUp(UserSignUpDTO user){
+    public ResponseDTO<UserResponseDTO> signUp(UserSignUpDTO user) {
         String password = user.getPassword();
         user.setPassword(passwordEncoder.encode(password));
         UserEntity userEntity = userMapper.toUserEntityFromUserSignUpDTO(user);
         userEntity.setRole(UserRole.CUSTOMER);
         UserEntity createdUser = userRepository.save(userEntity);
-        ResponseDTO<UserResponseDTO> userResponseDTOResponseDTO= new ResponseDTO<>();
-        UserResponseDTO userResponseDTO = userMapper.toUSerResponseDTOFromUserEntity(createdUser);
+        ResponseDTO<UserResponseDTO> userResponseDTOResponseDTO = new ResponseDTO<>();
+        UserResponseDTO userResponseDTO = ModelToResponse.parseUserToResponse(createdUser);
         userResponseDTOResponseDTO.setData(userResponseDTO);
         userResponseDTOResponseDTO.setResponseCode(0);
-        return generateSuccessResponseForUser(userResponseDTO);
+        String token = jwtUtility.generateToken(userEntity);
+        sessionData.setToken(token);
+        sessionData.setUser(userResponseDTO);
+        return generateSuccessResponseForUser(userResponseDTO, token);
 
     }
 }

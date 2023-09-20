@@ -1,5 +1,6 @@
 package com.example.rotiscnz.security;
 
+import com.example.rotiscnz.dtos.ModelToResponse;
 import com.example.rotiscnz.dtos.userDTOs.UserResponseDTO;
 import com.example.rotiscnz.entities.UserEntity;
 import com.example.rotiscnz.mappers.UserMapper;
@@ -51,7 +52,7 @@ public class JWTAuthFilter extends OncePerRequestFilter {
             if (userId != null && SecurityContextHolder.getContext().getAuthentication() == null) {
                 UserEntity userDetails = this.userDetailsService.loadUserByUsername(userId);
                 log.info("ROLE : "+userDetails.getRole());
-                UserResponseDTO userResponseDTO = userMapper.toUSerResponseDTOFromUserEntity(userDetails);
+                UserResponseDTO userResponseDTO = ModelToResponse.parseUserToResponse(userDetails);
                 sessionData.setUser(userResponseDTO);
 
                 Boolean validateToken = this.jwtHelper.validateToken(token, userDetails);

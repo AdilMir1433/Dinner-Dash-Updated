@@ -13,11 +13,11 @@ import java.util.Set;
 @AllArgsConstructor
 @NoArgsConstructor
 public class ItemResponseDTO {
-    private int id;
+    private Long id;
     private String title;
     private String description;
     private String itemPhoto;
     private double price;
-    private Set<CartItemEntity> cartItemsById;
+//    private Set<CartItemEntity> cartItemsById;
     private List<String> categoryID;
 }

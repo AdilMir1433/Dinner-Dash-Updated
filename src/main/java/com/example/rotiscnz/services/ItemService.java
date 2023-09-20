@@ -2,6 +2,7 @@ package com.example.rotiscnz.services;
 
 import com.example.rotiscnz.dtos.ItemDTOs.ItemCreateDTO;
 import com.example.rotiscnz.dtos.ItemDTOs.ItemListResponseDTO;
+import com.example.rotiscnz.dtos.ItemDTOs.ItemMapperDTO;
 import com.example.rotiscnz.dtos.ItemDTOs.ItemResponseDTO;
 import com.example.rotiscnz.dtos.ResponseDTO;
 import com.example.rotiscnz.dtos.categoryDTOs.CategoryListDTO;
@@ -31,13 +32,13 @@ public class ItemService extends BaseService {
     @Transactional
     public ResponseDTO<ItemResponseDTO> save(ItemCreateDTO item) {
         try {
-            List<CategoryEntity> categoryEntities = categoryRepository.findAllByIdIn(item.getCategoryID());
-            List<Integer> categoryIdsList = categoryEntities.stream().map(CategoryEntity::getId).toList();
+            List<CategoryEntity> categoryEntities = categoryRepository.findAllById(item.getCategoryID());
+            List<Long> categoryIdsList = categoryEntities.stream().map(CategoryEntity::getId).toList();
             CategoryListDTO categoryListDTO = new CategoryListDTO(categoryIdsList);
-            ItemEntity itemEntity = mapper.toItemEntityFromItemCreateDTO(item);
+            ItemEntity itemEntity = ItemMapperDTO.toItemEntityFromItemCreateDTO(item);
             itemEntity.setCategoryID(objectMapper.writeValueAsString(categoryListDTO));
             itemRepository.save(itemEntity);
-            ItemResponseDTO itemResponseDTO = mapper.toItemResponseDTOFromItemEntity(itemEntity);
+            ItemResponseDTO itemResponseDTO = ItemMapperDTO.toItemResponseDTOFromItemEntity(itemEntity);
             ResponseDTO<ItemResponseDTO> responseDTO = new ResponseDTO<>();
             responseDTO.setData(itemResponseDTO);
             responseDTO.setResponseCode(0);
@@ -57,10 +58,10 @@ public class ItemService extends BaseService {
             List<ItemResponseDTO> itemResponseDTOS = new ArrayList<>();
 
             for (ItemEntity item : items) {
-                ItemResponseDTO itemResponseDTO = mapper.toItemResponseDTOFromItemEntity(item);
+                ItemResponseDTO itemResponseDTO =ItemMapperDTO.toItemResponseDTOFromItemEntity(item);
                 if (item.getCategoryID() != null) {
                     CategoryListDTO categoryIdList = objectMapper.readValue(item.getCategoryID(), CategoryListDTO.class);
-                    List<CategoryEntity> categoryEntities = categoryRepository.findAllByIdIn(categoryIdList.getCategoryListId());
+                    List<CategoryEntity> categoryEntities = categoryRepository.findAllById(categoryIdList.getCategoryListId());
                     itemResponseDTO.setCategoryID(categoryEntities.stream().map(categoryEntity -> {
                         return categoryEntity.getCategoryName();
                     }).toList());
@@ -84,7 +85,7 @@ public class ItemService extends BaseService {
         Optional<ItemEntity> item =  itemRepository.findById(id);
         ResponseDTO<ItemResponseDTO> responseDTO= new ResponseDTO<>();
         if(item.isPresent()){
-            ItemResponseDTO itemResponseDTO = mapper.toItemResponseDTOFromItemEntity(item.get());
+            ItemResponseDTO itemResponseDTO = ItemMapperDTO.toItemResponseDTOFromItemEntity(item.get());
             responseDTO.setData(itemResponseDTO);
             responseDTO.setResponseCode(0);
             return responseDTO;

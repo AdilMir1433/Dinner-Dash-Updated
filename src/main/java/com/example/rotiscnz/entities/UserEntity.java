@@ -1,6 +1,9 @@
 package com.example.rotiscnz.entities;
 
 import com.example.rotiscnz.enums.UserRole;
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -21,10 +24,10 @@ import java.util.Set;
 @Entity
 @Table(name = "user", schema = "dinner_dash", catalog = "")
 public class UserEntity implements UserDetails {
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.AUTO)
     @Id
     @Column(name = "id")
-    private int id;
+    private Long id;
     @Basic
     @Column(name = "email")
     private String email;
@@ -34,12 +37,15 @@ public class UserEntity implements UserDetails {
     @Basic
     @Column(name = "full_name")
     private String fullName;
-    @OneToMany(mappedBy = "userByUserId",fetch = FetchType.EAGER)
-    private Set<CartEntity> cartsById;
+
     @ColumnDefault("'CUSTOMER'")
     @Enumerated(EnumType.STRING)
     private UserRole role;
     private String password;
+
+    //    @OneToMany(mappedBy = "userByUserId",fetch = FetchType.EAGER)
+////    @JsonManagedReference
+//    private Set<CartEntity> cartsById;
 
 //    public int getId() {
 //        return id;
@@ -73,18 +79,18 @@ public class UserEntity implements UserDetails {
 //        this.fullName = fullName;
 //    }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        UserEntity that = (UserEntity) o;
-        return id == that.id && Objects.equals(email, that.email) && Objects.equals(displayName, that.displayName) && Objects.equals(fullName, that.fullName);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(id, email, displayName, fullName);
-    }
+//    @Override
+//    public boolean equals(Object o) {
+//        if (this == o) return true;
+//        if (o == null || getClass() != o.getClass()) return false;
+//        UserEntity that = (UserEntity) o;
+//        return id == that.id && Objects.equals(email, that.email) && Objects.equals(displayName, that.displayName) && Objects.equals(fullName, that.fullName);
+//    }
+//
+//    @Override
+//    public int hashCode() {
+//        return Objects.hash(id, email, displayName, fullName);
+//    }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

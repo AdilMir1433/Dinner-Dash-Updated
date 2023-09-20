@@ -1,10 +1,13 @@
 package com.example.rotiscnz.entities;
 
 import jakarta.persistence.*;
+import jakarta.persistence.criteria.Order;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 
@@ -14,15 +17,15 @@ import java.util.Set;
 @Entity
 @Table(name = "item", schema = "dinner_dash", catalog = "")
 public class ItemEntity {
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.AUTO)
     @Id
     @Column(name = "id")
-    private int id;
+    private Long id;
     @Basic
     @Column(name = "title")
     private String title;
     @Basic
-    @Column(name = "description")
+    @Column(name = "description",length = 1000)
     private String description;
     @Basic
     @Column(name = "item_photo")
@@ -30,11 +33,12 @@ public class ItemEntity {
     @Basic
     @Column(name = "price")
     private double price;
-    @OneToMany(mappedBy = "itemByItemId")
-    private Set<CartItemEntity> cartItemsById;
     @Basic
     @Column(name = "category_id")
     private String categoryID;
+   // @OneToMany(mappedBy = "itemByItemId")
+//    private Set<CartItemEntity> cartItemsById;
+
 //
 //    public int getId() {
 //        return id;
@@ -85,17 +89,17 @@ public class ItemEntity {
 //        this.cartItemsById = cartItemsById;
 //    }
 //
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        ItemEntity that = (ItemEntity) o;
-        return id == that.id && Double.compare(price, that.price) == 0 && Objects.equals(title, that.title) && Objects.equals(description, that.description) && Objects.equals(itemPhoto, that.itemPhoto);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(id, title, description, itemPhoto, price);
-    }
+//
+//    @Override
+//    public boolean equals(Object o) {
+//        if (this == o) return true;
+//        if (o == null || getClass() != o.getClass()) return false;
+//        ItemEntity that = (ItemEntity) o;
+//        return id == that.id && Double.compare(price, that.price) == 0 && Objects.equals(title, that.title) && Objects.equals(description, that.description) && Objects.equals(itemPhoto, that.itemPhoto);
+//    }
+//
+//    @Override
+//    public int hashCode() {
+//        return Objects.hash(id, title, description, itemPhoto, price);
+//    }
 }

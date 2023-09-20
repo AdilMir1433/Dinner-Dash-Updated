@@ -14,5 +14,5 @@ public class ItemCreateDTO {
     private String description;
     private String itemPhoto;
     private double price;
-    private List<Integer> categoryID;
+    private List<Long> categoryID;
 }

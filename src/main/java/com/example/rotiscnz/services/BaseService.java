@@ -2,7 +2,9 @@ package com.example.rotiscnz.services;
 
 import com.example.rotiscnz.dtos.ResponseDTO;
 import com.example.rotiscnz.dtos.userDTOs.UserResponseDTO;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 public class BaseService {
 
     /**
@@ -33,10 +35,12 @@ public class BaseService {
      * @param userResponseDTO: User info
      * @return responseDTO
      */
-    public static ResponseDTO<UserResponseDTO> generateSuccessResponseForUser(UserResponseDTO userResponseDTO) {
+    public static ResponseDTO<UserResponseDTO> generateSuccessResponseForUser(UserResponseDTO userResponseDTO,String token) {
         ResponseDTO<UserResponseDTO> responseDTO = new ResponseDTO<>();
         responseDTO.setData(userResponseDTO);
+        log.info("ResponseDTO : "+responseDTO);
         responseDTO.setResponseCode(0);
+        responseDTO.setRefreshToken(token);
         return responseDTO;
     }
 
