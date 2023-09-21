@@ -4,16 +4,17 @@ import com.example.rotiscnz.dtos.ResponseDTO;
 import com.example.rotiscnz.dtos.userDTOs.UserLoginDTO;
 import com.example.rotiscnz.dtos.userDTOs.UserResponseDTO;
 import com.example.rotiscnz.dtos.userDTOs.UserSignUpDTO;
-import com.example.rotiscnz.services.UserService;
+import com.example.rotiscnz.services.UserServiceImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/user")
 @RequiredArgsConstructor
-@CrossOrigin("http://localhost:3000")
+//@CrossOrigin("http://localhost:3000")
+@CrossOrigin({"https://d100-122-129-66-106.ngrok-free.app", "*"})
 public class UserController {
-    private final UserService userService;
+    private final UserServiceImpl userService;
 
     /**
      * Method to login user

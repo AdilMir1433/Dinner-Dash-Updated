@@ -11,6 +11,9 @@ import com.example.rotiscnz.entities.ItemEntity;
 import com.example.rotiscnz.mappers.ItemMapper;
 import com.example.rotiscnz.repositories.CategoryRepository;
 import com.example.rotiscnz.repositories.ItemRepository;
+import com.example.rotiscnz.security.JWTUtility;
+import com.example.rotiscnz.serviceinterfaces.ItemServiceInterface;
+import com.example.rotiscnz.utility.SessionData;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.transaction.Transactional;
@@ -23,12 +26,14 @@ import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
-public class ItemService extends BaseService {
+public class ItemServiceImpl extends BaseService implements ItemServiceInterface {
     private final ItemRepository itemRepository;
-    private final ItemMapper mapper;
     private final CategoryRepository categoryRepository;
     private final ObjectMapper objectMapper;
+    private final SessionData sessionData;
+    private final JWTUtility utility;
 
+    @Override
     @Transactional
     public ResponseDTO<ItemResponseDTO> save(ItemCreateDTO item) {
         try {
@@ -42,16 +47,23 @@ public class ItemService extends BaseService {
             ResponseDTO<ItemResponseDTO> responseDTO = new ResponseDTO<>();
             responseDTO.setData(itemResponseDTO);
             responseDTO.setResponseCode(0);
+            if (utility.isTokenExpired(sessionData.getToken())) {
+                responseDTO.setRefreshToken(utility.generateToken(sessionData.getUser()));
+            }
             return responseDTO;
         } catch (JsonProcessingException ex) {
             ResponseDTO<ItemResponseDTO> responseDTO = new ResponseDTO<>();
             responseDTO.setData(null);
             responseDTO.setErrorMessage("Error saving item");
             responseDTO.setResponseCode(-1);
+            if (utility.isTokenExpired(sessionData.getToken())) {
+                responseDTO.setRefreshToken(utility.generateToken(sessionData.getUser()));
+            }
             return responseDTO;
         }
     }
 
+    @Override
     public ResponseDTO<ItemListResponseDTO> getAllItems() {
         try {
             List<ItemEntity> items = itemRepository.findAll();
@@ -71,16 +83,23 @@ public class ItemService extends BaseService {
             ResponseDTO<ItemListResponseDTO> responseDTO = new ResponseDTO<>();
             ItemListResponseDTO itemListResponseDTO = new ItemListResponseDTO(itemResponseDTOS);
             responseDTO.setData(itemListResponseDTO);
+            if (utility.isTokenExpired(sessionData.getToken())) {
+                responseDTO.setRefreshToken(utility.generateToken(sessionData.getUser()));
+            }
             responseDTO.setResponseCode(0);
             return responseDTO;
         } catch (JsonProcessingException ex) {
             ResponseDTO<ItemListResponseDTO> responseDTO = new ResponseDTO<>();
             responseDTO.setData(null);
             responseDTO.setResponseCode(-1);
+            if (utility.isTokenExpired(sessionData.getToken())) {
+                responseDTO.setRefreshToken(utility.generateToken(sessionData.getUser()));
+            }
             return responseDTO;
         }
     }
 
+    @Override
     public ResponseDTO<ItemResponseDTO> getItem(Long id){
         Optional<ItemEntity> item =  itemRepository.findById(id);
         ResponseDTO<ItemResponseDTO> responseDTO= new ResponseDTO<>();
@@ -88,6 +107,9 @@ public class ItemService extends BaseService {
             ItemResponseDTO itemResponseDTO = ItemMapperDTO.toItemResponseDTOFromItemEntity(item.get());
             responseDTO.setData(itemResponseDTO);
             responseDTO.setResponseCode(0);
+            if (utility.isTokenExpired(sessionData.getToken())) {
+                responseDTO.setRefreshToken(utility.generateToken(sessionData.getUser()));
+            }
             return responseDTO;
         }
         responseDTO.setResponseCode(-1);

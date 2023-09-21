@@ -4,7 +4,7 @@ import com.example.rotiscnz.dtos.ModelToResponse;
 import com.example.rotiscnz.dtos.userDTOs.UserResponseDTO;
 import com.example.rotiscnz.entities.UserEntity;
 import com.example.rotiscnz.mappers.UserMapper;
-import com.example.rotiscnz.services.UserService;
+import com.example.rotiscnz.services.UserServiceImpl;
 import com.example.rotiscnz.utility.SessionData;
 import io.jsonwebtoken.MalformedJwtException;
 import jakarta.servlet.FilterChain;
@@ -28,7 +28,7 @@ import java.util.Enumeration;
 @Slf4j
 public class JWTAuthFilter extends OncePerRequestFilter {
     private final JWTUtility jwtHelper;
-    private final UserService userDetailsService;
+    private final UserServiceImpl userDetailsService;
     private final SessionData sessionData;
     private final UserMapper userMapper;
     @Override
@@ -53,7 +53,7 @@ public class JWTAuthFilter extends OncePerRequestFilter {
                 UserEntity userDetails = this.userDetailsService.loadUserByUsername(userId);
                 log.info("ROLE : "+userDetails.getRole());
                 UserResponseDTO userResponseDTO = ModelToResponse.parseUserToResponse(userDetails);
-                sessionData.setUser(userResponseDTO);
+                sessionData.setUser(userDetails);
 
                 Boolean validateToken = this.jwtHelper.validateToken(token, userDetails);
                 if (Boolean.TRUE.equals(validateToken)) {

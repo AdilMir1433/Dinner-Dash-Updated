@@ -22,6 +22,8 @@ public class CartItemEntity {
 //    @ManyToOne
 //    @JoinColumn(name = "item_id", referencedColumnName = "id")
     private Long itemByItemId;
+
+    private Long orderID;
 //    @ManyToOne
 //    @JoinColumn(name = "cart_id", referencedColumnName = "id")
 //    private CartEntity cartByCartId;

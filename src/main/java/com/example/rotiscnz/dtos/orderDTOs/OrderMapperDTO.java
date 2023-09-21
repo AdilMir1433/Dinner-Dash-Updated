@@ -16,6 +16,7 @@ public class OrderMapperDTO {
         orderResponseDTO.setOrderTime(orderEntity.getOrderTime());
         orderResponseDTO.setStatus(orderEntity.getStatus());
         orderResponseDTO.setCartID(orderEntity.getCartID());
+        orderResponseDTO.setId(orderEntity.getId());
         return orderResponseDTO;
     }
 }

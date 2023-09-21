@@ -1,19 +1,25 @@
 package com.example.rotiscnz.security;
 
 import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.security.Keys;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
+import javax.crypto.SecretKey;
+import java.nio.charset.StandardCharsets;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
 
+import static javax.crypto.Cipher.SECRET_KEY;
+
 @Component
 public class JWTUtility {
-    public static final long JWT_TOKEN_VALIDITY = 24 * 60 * 60; //  1 Day represented in seconds
+    public static final long JWT_TOKEN_VALIDITY =  10*60; //  1 Day represented in seconds
 
     private String secret = "afafasfafafasfasfasfafacasdasfasxASFACASDFACASDFASFASFDAFASFASDAADSCSDFADCVSGCFVADXCcadwavfsfarvf";
 
@@ -53,16 +59,16 @@ public class JWTUtility {
      * @return Claims - All the claims of a particular user from its token
      * */
 
-    private Claims getAllClaimsFromToken(String token) {
-        return Jwts.parser().setSigningKey(secret).parseClaimsJws(token).getBody();
-    }
+//    private Claims getAllClaimsFromToken(String token) {
+//        return Jwts.parser().setSigningKey(secret).parseClaimsJws(token).getBody();
+//    }
 
 
     /** Method to check if the token has expired or not
      * @param token - JWT Token to be decoded - Type String
      * @return Boolean - True if token has expired, else False
      * */
-    private Boolean isTokenExpired(String token) {
+    public Boolean isTokenExpired(String token) {
         final Date expiration = getExpirationDateFromToken(token);
         return expiration.before(new Date());
     }
@@ -90,4 +96,17 @@ public class JWTUtility {
         return (username.equals(userDetails.getUsername()) && !isTokenExpired(token));
     }
 
+    private Claims getAllClaimsFromToken(String token) {
+        try {
+            Claims claims = Jwts.parser().setSigningKey(secret).parseClaimsJws(token).getBody();
+            return claims;
+        } catch (ExpiredJwtException e) {
+            return e.getClaims();
+        }
+    }
+
+//    public Boolean isTokenExpired(String token) {
+//        Date expiration = getExpirationDateFromToken(token);
+//        return expiration.before(new Date());
+//    }
 }

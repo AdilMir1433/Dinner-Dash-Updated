@@ -13,7 +13,8 @@ import java.util.List;
 @Data
 public class CartItemResponseDTO {
     private Long id;
-    private CartEntity cartByCartId;
-    private List<ItemEntity> itemByItemId;
+    private Long cartByCartId;
+    private Long itemByItemId;
+    private Long orderID;
 
 }

@@ -9,6 +9,7 @@ import com.example.rotiscnz.enums.UserRole;
 import com.example.rotiscnz.mappers.UserMapper;
 import com.example.rotiscnz.repositories.UserRepository;
 import com.example.rotiscnz.security.JWTUtility;
+import com.example.rotiscnz.serviceinterfaces.UserServiceInterface;
 import com.example.rotiscnz.utility.SessionData;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -20,7 +21,7 @@ import org.springframework.stereotype.Service;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class UserService extends BaseService implements UserDetailsService {
+public class UserServiceImpl extends BaseService implements UserDetailsService, UserServiceInterface {
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
@@ -49,10 +50,12 @@ public class UserService extends BaseService implements UserDetailsService {
      * @param password: password entered by the user (String)
      * @return token: generated token is returned (String)
      */
+
+    @Override
     public ResponseDTO<UserResponseDTO> login(String email, String password) {
         UserEntity user = loadUserByUsername(email);
         UserResponseDTO userResponseDTO = ModelToResponse.parseUserToResponse(user);
-        sessionData.setUser(userResponseDTO);
+        sessionData.setUser(user);
         if (!passwordEncoder.matches(password, user.getPassword())) {
             return generateFailureResponse("User Name or Password Error");
         }
@@ -73,18 +76,25 @@ public class UserService extends BaseService implements UserDetailsService {
      * @param password: password entered by the user (String)
      * @return User: User details are returned (UserResponseDTO)
      */
+    @Override
     public ResponseDTO<UserResponseDTO> getProfile(String email, String password) {
         UserEntity user = loadUserByUsername(email);
         if (!passwordEncoder.matches(password, user.getPassword())) {
             ResponseDTO<UserResponseDTO> responseDTO = new ResponseDTO<>();
             responseDTO.setResponseCode(-1);
             responseDTO.setErrorMessage("User Name or Password Error");
+            if (jwtUtility.isTokenExpired(sessionData.getToken())) {
+                responseDTO.setRefreshToken(jwtUtility.generateToken(sessionData.getUser()));
+            }
             return responseDTO;
         }
         ResponseDTO<UserResponseDTO> userResponseDTOResponseDTO = new ResponseDTO<>();
         UserResponseDTO userResponseDTO = userMapper.toUserResponseDTOFromUserEntity(user);
         userResponseDTOResponseDTO.setData(userResponseDTO);
         userResponseDTOResponseDTO.setResponseCode(0);
+        if (jwtUtility.isTokenExpired(sessionData.getToken())) {
+            userResponseDTOResponseDTO.setRefreshToken(jwtUtility.generateToken(sessionData.getUser()));
+        }
         return userResponseDTOResponseDTO;
     }
 
@@ -94,6 +104,8 @@ public class UserService extends BaseService implements UserDetailsService {
      * @param user: User Data (UserResponseDTO)
      * @return User: User details are returned (UserResponseDTO)
      */
+
+    @Override
     public ResponseDTO<UserResponseDTO> signUp(UserSignUpDTO user) {
         String password = user.getPassword();
         user.setPassword(passwordEncoder.encode(password));
@@ -106,7 +118,7 @@ public class UserService extends BaseService implements UserDetailsService {
         userResponseDTOResponseDTO.setResponseCode(0);
         String token = jwtUtility.generateToken(userEntity);
         sessionData.setToken(token);
-        sessionData.setUser(userResponseDTO);
+        sessionData.setUser(userEntity);
         return generateSuccessResponseForUser(userResponseDTO, token);
 
     }

@@ -1,6 +1,7 @@
 package com.example.rotiscnz.utility;
 
 import com.example.rotiscnz.dtos.userDTOs.UserResponseDTO;
+import com.example.rotiscnz.entities.UserEntity;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -17,7 +18,7 @@ import java.io.Serializable;
 @AllArgsConstructor
 public class SessionData implements Serializable {
 
-    private UserResponseDTO user;
+    private UserEntity user;
     private String token;
     public void removeSessionData(){
         this.user = null;

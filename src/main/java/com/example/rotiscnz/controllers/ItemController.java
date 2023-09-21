@@ -4,18 +4,17 @@ import com.example.rotiscnz.dtos.ItemDTOs.ItemCreateDTO;
 import com.example.rotiscnz.dtos.ItemDTOs.ItemListResponseDTO;
 import com.example.rotiscnz.dtos.ItemDTOs.ItemResponseDTO;
 import com.example.rotiscnz.dtos.ResponseDTO;
-import com.example.rotiscnz.services.ItemService;
+import com.example.rotiscnz.services.ItemServiceImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
 @RequestMapping("/items")
 @RequiredArgsConstructor
-@CrossOrigin("http://localhost:3000")
+//@CrossOrigin("http://localhost:3000")
+@CrossOrigin({"https://d100-122-129-66-106.ngrok-free.app", "*"})
 public class ItemController {
-    private final ItemService service;
+    private final ItemServiceImpl service;
 
     @PostMapping("/save")
     public ResponseDTO<ItemResponseDTO> save(@RequestBody ItemCreateDTO item){

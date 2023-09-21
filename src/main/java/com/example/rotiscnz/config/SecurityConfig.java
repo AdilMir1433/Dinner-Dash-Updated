@@ -3,7 +3,8 @@ package com.example.rotiscnz.config;
 import com.example.rotiscnz.enums.UserRole;
 import com.example.rotiscnz.security.JWTAuthEntry;
 import com.example.rotiscnz.security.JWTAuthFilter;
-import com.example.rotiscnz.services.UserService;
+import com.example.rotiscnz.services.UserServiceImpl;
+import com.example.rotiscnz.utility.Constants;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.context.annotation.Bean;
@@ -19,33 +20,17 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @Configuration
 @RequiredArgsConstructor
 public class SecurityConfig {
-    private final UserService userService;
+    private final UserServiceImpl userService;
     private final JWTAuthEntry point;
     private final JWTAuthFilter filter;
     private final PasswordEncoder passwordEncoder;
-    private static final String[] AUTH_WHITELIST = {
-            "/user/login",
-            "/user/signup",
-            "/items/get-items",
-            "/category/get-categories",
-            "items/get-item/**",
-            "/cart/**",
-            "/cart_item/**",
-            "/api-docs",
-            "/swagger-ui/**",
-            "/swagger-resources/*",
-    };
-    private static final String[] AUTHORITY_LIST = {
-            "/items/save",
-            "/category/create",
-    };
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http.csrf(AbstractHttpConfigurer::disable)
                 .cors(Customizer.withDefaults())
                 .authorizeRequests()
-                .requestMatchers(AUTH_WHITELIST).permitAll()
-                .requestMatchers(AUTHORITY_LIST).hasAuthority("ADMINISTRATOR")
+                .requestMatchers(Constants.AUTH_WHITELIST).permitAll()
+                .requestMatchers(Constants.AUTHORITY_LIST).hasAuthority("ADMINISTRATOR")
                 .requestMatchers(PathRequest.toStaticResources().atCommonLocations()).permitAll()
                 .anyRequest()
                 .authenticated()

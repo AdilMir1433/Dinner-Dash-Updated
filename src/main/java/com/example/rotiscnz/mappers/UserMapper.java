@@ -17,12 +17,10 @@ public interface UserMapper {
 
     @Mapping(target = "role", ignore = true)
     @Mapping(target = "id", ignore = true)
-    @Mapping(target = "cartsById", ignore = true)
     UserEntity toUserEntityFromUserSignUpDTO(UserSignUpDTO user);
 
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "role", ignore = true)
-    @Mapping(target = "cartsById", ignore = true)
     UserResponseDTO toUserResponseDTOFromUserSignUpDTO(UserSignUpDTO userSignUpDTO);
 
 }
