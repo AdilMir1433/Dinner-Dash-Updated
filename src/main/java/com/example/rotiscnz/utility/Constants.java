@@ -13,6 +13,8 @@ public class Constants {
             "/api-docs",
             "/swagger-ui/**",
             "/swagger-resources/*",
+            "/v3/api-docs",
+            "/api/v1/auth/**",
     };
     public static final String[] AUTHORITY_LIST = {
             "/items/save",
