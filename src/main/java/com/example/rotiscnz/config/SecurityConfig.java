@@ -30,7 +30,7 @@ public class SecurityConfig {
                 .cors(Customizer.withDefaults())
                 .authorizeRequests()
                 .requestMatchers(Constants.AUTH_WHITELIST).permitAll()
-                .requestMatchers(Constants.AUTHORITY_LIST).hasAuthority("ADMINISTRATOR")
+                .requestMatchers(Constants.AUTHORITY_LIST).hasAuthority(UserRole.ADMINISTRATOR.toString())
                 .requestMatchers(PathRequest.toStaticResources().atCommonLocations()).permitAll()
                 .anyRequest()
                 .authenticated()

@@ -11,8 +11,8 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/user")
 @RequiredArgsConstructor
-//@CrossOrigin("http://localhost:3000")
-@CrossOrigin({"https://d100-122-129-66-106.ngrok-free.app", "*"})
+@CrossOrigin("http://localhost:3000")
+//@CrossOrigin({"https://d100-122-129-66-106.ngrok-free.app", "*"})
 public class UserController {
     private final UserServiceImpl userService;
 

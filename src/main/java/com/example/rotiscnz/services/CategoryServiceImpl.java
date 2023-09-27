@@ -32,7 +32,7 @@ public class CategoryServiceImpl extends BaseService implements CategoryServiceI
         ResponseDTO<CategoryResponseDTO> responseDTO = new ResponseDTO<>();
         responseDTO.setResponseCode(0);
         responseDTO.setData(categoryResponseDTO);
-        if (utility.isTokenExpired(sessionData.getToken())) {
+        if (sessionData!=null && !sessionData.getToken().isEmpty() && Boolean.TRUE.equals(utility.isTokenExpired(sessionData.getToken()))) {
             responseDTO.setRefreshToken(utility.generateToken(sessionData.getUser()));
         }
         return responseDTO;
@@ -48,7 +48,7 @@ public class CategoryServiceImpl extends BaseService implements CategoryServiceI
         ResponseDTO<List<CategoryResponseDTO>> responseDTO = new ResponseDTO<>();
         responseDTO.setData(categoryResponseDTOS);
         responseDTO.setResponseCode(0);
-        if (utility.isTokenExpired(sessionData.getToken())) {
+        if (sessionData!=null && !sessionData.getToken().isEmpty() && Boolean.TRUE.equals(utility.isTokenExpired(sessionData.getToken()))) {
             responseDTO.setRefreshToken(utility.generateToken(sessionData.getUser()));
         }
         return responseDTO;

@@ -1,50 +1,37 @@
 package com.example.rotiscnz.config;
 
-import io.swagger.v3.oas.models.OpenAPI;
-import io.swagger.v3.oas.models.info.Contact;
-import io.swagger.v3.oas.models.info.Info;
-import io.swagger.v3.oas.models.info.License;
-import io.swagger.v3.oas.models.servers.Server;
-import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
+import io.swagger.v3.oas.annotations.OpenAPIDefinition;
+import io.swagger.v3.oas.annotations.enums.SecuritySchemeIn;
+import io.swagger.v3.oas.annotations.enums.SecuritySchemeType;
+import io.swagger.v3.oas.annotations.info.Contact;
+import io.swagger.v3.oas.annotations.info.Info;
+import io.swagger.v3.oas.annotations.security.SecurityScheme;
+import io.swagger.v3.oas.annotations.servers.Server;
+@OpenAPIDefinition(info = @Info(
+        contact = @Contact(
+                name = "Adil Mir",
+                email = "adil.mir@devsinc.com"
 
-import java.util.List;
+        ),
+        description = "Restaurant App",
+        title = "Roti Scnz - Swagger",
+        version = "0.69"
 
-@Configuration
-@RequiredArgsConstructor
+),
+servers = @Server(
+        description = "DEV",
+        url = "http://localhost:8080"
+))
+@SecurityScheme(
+        name = "bearerAuth",
+        description = "JWT Authentication",
+        scheme = "bearer",
+        type = SecuritySchemeType.HTTP,
+        bearerFormat = "JWT",
+        in = SecuritySchemeIn.HEADER
+
+)
 public class OpenAPIConfig {
-    @Value("${openapi.dev-url}")
-    private String devUrl;
 
-    @Value("${openapi.prod-url}")
-    private String prodUrl;
 
-    @Bean
-    public OpenAPI myOpenAPI() {
-        Server devServer = new Server();
-        devServer.setUrl(devUrl);
-        devServer.setDescription("Server URL in Development environment");
-
-        Server prodServer = new Server();
-        prodServer.setUrl(prodUrl);
-        prodServer.setDescription("Server URL in Production environment");
-
-        Contact contact = new Contact();
-        contact.setEmail("contact@pasanabeysekara.com");
-        contact.setName("Pasan Abeysekara");
-        contact.setUrl("https://www.pasanabeysekara.com");
-
-        License mitLicense = new License().name("MIT License").url("https://choosealicense.com/licenses/mit/");
-
-        Info info = new Info()
-                .title("Demo Service API")
-                .version("1.0")
-                .contact(contact)
-                .description("This API exposes endpoints to manage demo.").termsOfService("https://www.pasanabeysekara.com")
-                .license(mitLicense);
-
-        return new OpenAPI().info(info).servers(List.of(devServer, prodServer));
-    }
 }

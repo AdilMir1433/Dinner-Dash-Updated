@@ -47,7 +47,7 @@ public class ItemServiceImpl extends BaseService implements ItemServiceInterface
             ResponseDTO<ItemResponseDTO> responseDTO = new ResponseDTO<>();
             responseDTO.setData(itemResponseDTO);
             responseDTO.setResponseCode(0);
-            if (utility.isTokenExpired(sessionData.getToken())) {
+            if (sessionData!=null && !sessionData.getToken().isEmpty() && Boolean.TRUE.equals(utility.isTokenExpired(sessionData.getToken()))) {
                 responseDTO.setRefreshToken(utility.generateToken(sessionData.getUser()));
             }
             return responseDTO;
@@ -56,7 +56,7 @@ public class ItemServiceImpl extends BaseService implements ItemServiceInterface
             responseDTO.setData(null);
             responseDTO.setErrorMessage("Error saving item");
             responseDTO.setResponseCode(-1);
-            if (utility.isTokenExpired(sessionData.getToken())) {
+            if (sessionData!=null && !sessionData.getToken().isEmpty() && Boolean.TRUE.equals(utility.isTokenExpired(sessionData.getToken()))) {
                 responseDTO.setRefreshToken(utility.generateToken(sessionData.getUser()));
             }
             return responseDTO;
@@ -74,16 +74,14 @@ public class ItemServiceImpl extends BaseService implements ItemServiceInterface
                 if (item.getCategoryID() != null) {
                     CategoryListDTO categoryIdList = objectMapper.readValue(item.getCategoryID(), CategoryListDTO.class);
                     List<CategoryEntity> categoryEntities = categoryRepository.findAllById(categoryIdList.getCategoryListId());
-                    itemResponseDTO.setCategoryID(categoryEntities.stream().map(categoryEntity -> {
-                        return categoryEntity.getCategoryName();
-                    }).toList());
+                    itemResponseDTO.setCategoryID(categoryEntities.stream().map(CategoryEntity::getCategoryName).toList());
                 }
                 itemResponseDTOS.add(itemResponseDTO);
             }
             ResponseDTO<ItemListResponseDTO> responseDTO = new ResponseDTO<>();
             ItemListResponseDTO itemListResponseDTO = new ItemListResponseDTO(itemResponseDTOS);
             responseDTO.setData(itemListResponseDTO);
-            if (utility.isTokenExpired(sessionData.getToken())) {
+            if (sessionData!=null && !sessionData.getToken().isEmpty() && Boolean.TRUE.equals(utility.isTokenExpired(sessionData.getToken()))) {
                 responseDTO.setRefreshToken(utility.generateToken(sessionData.getUser()));
             }
             responseDTO.setResponseCode(0);
@@ -92,7 +90,7 @@ public class ItemServiceImpl extends BaseService implements ItemServiceInterface
             ResponseDTO<ItemListResponseDTO> responseDTO = new ResponseDTO<>();
             responseDTO.setData(null);
             responseDTO.setResponseCode(-1);
-            if (utility.isTokenExpired(sessionData.getToken())) {
+            if (sessionData!=null && !sessionData.getToken().isEmpty() && Boolean.TRUE.equals(utility.isTokenExpired(sessionData.getToken()))) {
                 responseDTO.setRefreshToken(utility.generateToken(sessionData.getUser()));
             }
             return responseDTO;
@@ -107,7 +105,7 @@ public class ItemServiceImpl extends BaseService implements ItemServiceInterface
             ItemResponseDTO itemResponseDTO = ItemMapperDTO.toItemResponseDTOFromItemEntity(item.get());
             responseDTO.setData(itemResponseDTO);
             responseDTO.setResponseCode(0);
-            if (utility.isTokenExpired(sessionData.getToken())) {
+            if (sessionData!=null && !sessionData.getToken().isEmpty() && Boolean.TRUE.equals(utility.isTokenExpired(sessionData.getToken()))){
                 responseDTO.setRefreshToken(utility.generateToken(sessionData.getUser()));
             }
             return responseDTO;

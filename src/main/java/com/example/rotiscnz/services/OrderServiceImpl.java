@@ -37,7 +37,7 @@ public class OrderServiceImpl implements OrderServiceInterface {
         OrderResponseDTO orderResponseDTO = OrderMapperDTO.toOrderResponseDTOFromOrderEntity(orderEntity);
         ResponseDTO<OrderResponseDTO> responseDTO = new ResponseDTO<>();
         responseDTO.setData(orderResponseDTO);
-        if (utility.isTokenExpired(sessionData.getToken())) {
+        if (sessionData!=null &&!sessionData.getToken().isEmpty() && Boolean.TRUE.equals(utility.isTokenExpired(sessionData.getToken()))) {
             responseDTO.setRefreshToken(utility.generateToken(sessionData.getUser()));
         }
         return responseDTO;
@@ -46,7 +46,6 @@ public class OrderServiceImpl implements OrderServiceInterface {
     @Override
     public ResponseDTO<List<OrderCompleteResponseDTO>> getOrderOfUser(Long id){
         List<OrderEntity> orderEntity =  repository.findAllByCartID(id);
-        List<OrderResponseDTO> orderResponseDTOS = new ArrayList<>();
         List<OrderCompleteResponseDTO> orderCompleteResponseDTO  = new ArrayList<>();
         for (OrderEntity order: orderEntity) {
             OrderCompleteResponseDTO completeResponseDTO = new OrderCompleteResponseDTO();
@@ -66,7 +65,7 @@ public class OrderServiceImpl implements OrderServiceInterface {
         ResponseDTO<List<OrderCompleteResponseDTO>> responseDTO = new ResponseDTO<>();
         responseDTO.setData(orderCompleteResponseDTO);
         responseDTO.setResponseCode(0);
-        if (utility.isTokenExpired(sessionData.getToken())) {
+        if (sessionData!=null && !sessionData.getToken().isEmpty() && Boolean.TRUE.equals(utility.isTokenExpired(sessionData.getToken()))) {
             responseDTO.setRefreshToken(utility.generateToken(sessionData.getUser()));
         }
         return responseDTO;
@@ -82,7 +81,7 @@ public class OrderServiceImpl implements OrderServiceInterface {
         ResponseDTO<List<OrderResponseDTO>> responseDTO = new ResponseDTO<>();
         responseDTO.setData(orderResponseDTOS);
         responseDTO.setResponseCode(0);
-        if (utility.isTokenExpired(sessionData.getToken())) {
+        if (sessionData!=null && !sessionData.getToken().isEmpty() && Boolean.TRUE.equals(utility.isTokenExpired(sessionData.getToken()))) {
             responseDTO.setRefreshToken(utility.generateToken(sessionData.getUser()));
         }
         return responseDTO;

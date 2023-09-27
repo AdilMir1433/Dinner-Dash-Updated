@@ -5,13 +5,16 @@ import com.example.rotiscnz.dtos.userDTOs.UserResponseDTO;
 import com.example.rotiscnz.entities.UserEntity;
 import com.example.rotiscnz.mappers.UserMapper;
 import com.example.rotiscnz.services.UserServiceImpl;
+import com.example.rotiscnz.utility.Constants;
 import com.example.rotiscnz.utility.SessionData;
 import io.jsonwebtoken.MalformedJwtException;
+import io.micrometer.common.lang.NonNullApi;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletRequestWrapper;
 import jakarta.servlet.http.HttpServletResponse;
+import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -32,8 +35,8 @@ public class JWTAuthFilter extends OncePerRequestFilter {
     private final SessionData sessionData;
     private final UserMapper userMapper;
     @Override
-    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-        String token = request.getHeader("Authorization");
+    protected void doFilterInternal(HttpServletRequest request, @NonNull HttpServletResponse response, @NonNull FilterChain filterChain) throws ServletException, IOException {
+        String token = request.getHeader(Constants.AUTHORIZATION);
         if (token != null) {
             token = extractJwtToken(request);
             sessionData.setToken(token);
@@ -52,7 +55,6 @@ public class JWTAuthFilter extends OncePerRequestFilter {
             if (userId != null && SecurityContextHolder.getContext().getAuthentication() == null) {
                 UserEntity userDetails = this.userDetailsService.loadUserByUsername(userId);
                 log.info("ROLE : "+userDetails.getRole());
-                UserResponseDTO userResponseDTO = ModelToResponse.parseUserToResponse(userDetails);
                 sessionData.setUser(userDetails);
 
                 Boolean validateToken = this.jwtHelper.validateToken(token, userDetails);
@@ -68,39 +70,10 @@ public class JWTAuthFilter extends OncePerRequestFilter {
         filterChain.doFilter(request, response);
     }
     private String extractJwtToken(HttpServletRequest request) {
-        String header = request.getHeader("Authorization");
-        if (StringUtils.hasText(header) && header.startsWith("Bearer ")) {
+        String header = request.getHeader(Constants.AUTHORIZATION);
+        if (StringUtils.hasText(header) && header.startsWith(Constants.BEARER)) {
             return header.substring(7);
         }
         return null;
-    }
-    private static class CustomHttpServletRequestWrapper extends HttpServletRequestWrapper {
-        private final String headerValue;
-        public CustomHttpServletRequestWrapper(HttpServletRequest request, String headerValue) {
-            super(request);
-            this.headerValue = headerValue;
-        }
-        @Override
-        public String getHeader(String name) {
-            if ("Authorization".equalsIgnoreCase(name)) {
-                return headerValue;
-            }
-            return super.getHeader(name);
-        }
-        @Override
-        public Enumeration<String> getHeaderNames() {
-            Enumeration<String> headerNames = super.getHeaderNames();
-            if (headerNames == null) {
-                headerNames = Collections.enumeration(Collections.singleton("Authorization"));
-            }
-            return headerNames;
-        }
-        @Override
-        public Enumeration<String> getHeaders(String name) {
-            if ("Authorization".equalsIgnoreCase(name)) {
-                return Collections.enumeration(Collections.singleton(headerValue));
-            }
-            return super.getHeaders(name);
-        }
     }
 }

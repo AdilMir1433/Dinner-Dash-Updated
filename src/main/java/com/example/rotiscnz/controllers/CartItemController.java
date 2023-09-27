@@ -14,8 +14,8 @@ import java.util.List;
 @Slf4j
 @RequiredArgsConstructor
 @RequestMapping("/cart_item")
-//@CrossOrigin("http://localhost:3000")
-@CrossOrigin({"https://d100-122-129-66-106.ngrok-free.app", "*"})
+@CrossOrigin("http://localhost:3000")
+//@CrossOrigin({"https://d100-122-129-66-106.ngrok-free.app", "*"})
 public class CartItemController {
     private final CartItemServiceImpl service;
     @PostMapping("/add-cart-item")

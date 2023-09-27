@@ -11,8 +11,8 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/items")
 @RequiredArgsConstructor
-//@CrossOrigin("http://localhost:3000")
-@CrossOrigin({"https://d100-122-129-66-106.ngrok-free.app", "*"})
+@CrossOrigin("http://localhost:3000")
+//@CrossOrigin({"https://d100-122-129-66-106.ngrok-free.app", "*"})
 public class ItemController {
     private final ItemServiceImpl service;
 

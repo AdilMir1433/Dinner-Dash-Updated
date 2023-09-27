@@ -37,7 +37,7 @@ public class UserServiceImpl extends BaseService implements UserDetailsService, 
      */
     @Override
     public UserEntity loadUserByUsername(String username) throws UsernameNotFoundException {
-        System.out.println("fetching user from repo");
+
         return userRepository
                 .findByEmail(username)
                 .orElseThrow(() -> new UsernameNotFoundException("User not found"));
@@ -66,7 +66,7 @@ public class UserServiceImpl extends BaseService implements UserDetailsService, 
         responseDTO.setResponseCode(0);
         responseDTO.setRefreshToken(token);
         return responseDTO;
-        //return generateSuccessResponseForLogin(token, userResponseDTO);
+
     }
 
     /**
@@ -83,7 +83,7 @@ public class UserServiceImpl extends BaseService implements UserDetailsService, 
             ResponseDTO<UserResponseDTO> responseDTO = new ResponseDTO<>();
             responseDTO.setResponseCode(-1);
             responseDTO.setErrorMessage("User Name or Password Error");
-            if (jwtUtility.isTokenExpired(sessionData.getToken())) {
+            if (sessionData!=null && !sessionData.getToken().isEmpty() && Boolean.TRUE.equals(jwtUtility.isTokenExpired(sessionData.getToken()))) {
                 responseDTO.setRefreshToken(jwtUtility.generateToken(sessionData.getUser()));
             }
             return responseDTO;
@@ -92,7 +92,7 @@ public class UserServiceImpl extends BaseService implements UserDetailsService, 
         UserResponseDTO userResponseDTO = userMapper.toUserResponseDTOFromUserEntity(user);
         userResponseDTOResponseDTO.setData(userResponseDTO);
         userResponseDTOResponseDTO.setResponseCode(0);
-        if (jwtUtility.isTokenExpired(sessionData.getToken())) {
+        if (sessionData!=null && !sessionData.getToken().isEmpty() && Boolean.TRUE.equals(jwtUtility.isTokenExpired(sessionData.getToken()))) {
             userResponseDTOResponseDTO.setRefreshToken(jwtUtility.generateToken(sessionData.getUser()));
         }
         return userResponseDTOResponseDTO;
@@ -122,4 +122,5 @@ public class UserServiceImpl extends BaseService implements UserDetailsService, 
         return generateSuccessResponseForUser(userResponseDTO, token);
 
     }
+
 }

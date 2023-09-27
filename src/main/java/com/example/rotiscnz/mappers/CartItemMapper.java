@@ -11,5 +11,4 @@ public interface CartItemMapper {
     @Mapping(target = "orderID", ignore = true)
     @Mapping(target = "id", ignore = true)
     CartItemEntity toCartItemEntityFromCartItemCreateDTO(CartItemCreateDTO cartItemCreateDTO);
-//    CartItemResponseDTO toCartItemResponseDTOFromCartItemEntity(CartItemEntity cartItemEntity);
 }

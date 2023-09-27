@@ -12,8 +12,8 @@ import java.util.List;
 @RestController
 @RequestMapping("/category")
 @RequiredArgsConstructor
-//@CrossOrigin("http://localhost:3000")
-@CrossOrigin({"https://d100-122-129-66-106.ngrok-free.app", "*"})
+@CrossOrigin("http://localhost:3000")
+//@CrossOrigin({"https://d100-122-129-66-106.ngrok-free.app", "*"})
 public class CategoryController {
     private final CategoryServiceImpl categoryServiceImpl;
     @PostMapping("/create")

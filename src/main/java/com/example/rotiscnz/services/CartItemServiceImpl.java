@@ -8,7 +8,6 @@ import com.example.rotiscnz.dtos.orderDTOs.OrderCreateDTO;
 import com.example.rotiscnz.dtos.orderDTOs.OrderResponseDTO;
 import com.example.rotiscnz.entities.CartItemEntity;
 import com.example.rotiscnz.enums.OrderType;
-import com.example.rotiscnz.mappers.CartItemMapper;
 import com.example.rotiscnz.repositories.CartItemRepository;
 import com.example.rotiscnz.security.JWTUtility;
 import com.example.rotiscnz.serviceinterfaces.CartItemServiceInterface;
@@ -19,12 +18,12 @@ import org.springframework.stereotype.Service;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 @Service
 @RequiredArgsConstructor
 public class CartItemServiceImpl implements CartItemServiceInterface {
     private final CartItemRepository repository;
-    private final CartItemMapper mapper;
     private final OrderServiceImpl orderServiceImpl;
     private final SessionData sessionData;
     private final JWTUtility utility;
@@ -43,7 +42,7 @@ public class CartItemServiceImpl implements CartItemServiceInterface {
         ResponseDTO<CartItemResponseDTO> responseDTO = new ResponseDTO<>();
         responseDTO.setResponseCode(0);
         responseDTO.setData(null);
-        if (utility.isTokenExpired(sessionData.getToken())) {
+        if (sessionData!=null && !sessionData.getToken().isEmpty() && Boolean.TRUE.equals(utility.isTokenExpired(sessionData.getToken()))) {
             responseDTO.setRefreshToken(utility.generateToken(sessionData.getUser()));
         }
         return responseDTO;
@@ -52,9 +51,7 @@ public class CartItemServiceImpl implements CartItemServiceInterface {
     @Override
     public ResponseDTO<List<CartItemResponseDTO>> getAllItems(Long id) {
         List<CartItemEntity> items = repository.findAll();
-        List<CartItemEntity> filteredItems = items.stream().filter(i -> {
-            return i.getCartByCartId() == id;
-        }).toList();
+        List<CartItemEntity> filteredItems = items.stream().filter(i -> Objects.equals(i.getCartByCartId(), id)).toList();
         List<CartItemResponseDTO> cartItemResponseDTOS = new ArrayList<>();
         for (CartItemEntity cartItem : filteredItems) {
             cartItemResponseDTOS.add(CartItemMapperDTO.toCartItemResponseDTOFromCartItemEntity(cartItem));
@@ -62,7 +59,7 @@ public class CartItemServiceImpl implements CartItemServiceInterface {
         ResponseDTO<List<CartItemResponseDTO>> responseDTO = new ResponseDTO<>();
         responseDTO.setData(cartItemResponseDTOS);
         responseDTO.setResponseCode(0);
-        if (utility.isTokenExpired(sessionData.getToken())) {
+        if (sessionData!=null && !sessionData.getToken().isEmpty() && Boolean.TRUE.equals(utility.isTokenExpired(sessionData.getToken()))) {
             responseDTO.setRefreshToken(utility.generateToken(sessionData.getUser()));
         }
         return responseDTO;

@@ -22,10 +22,10 @@ public class CartServiceImpl implements CartServiceInterface {
     private final JWTUtility utility;
 
     @Override
-    public ResponseDTO<CartResponseDTO> createCart(Long id){
+    public ResponseDTO<CartResponseDTO> createCart(Long id) {
         CartEntity cart = new CartEntity();
         List<CartEntity> cartEntities = repository.findAll();
-        if(!cartEntities.isEmpty()) {
+        if (!cartEntities.isEmpty()) {
             for (CartEntity e : cartEntities) {
                 if (Objects.equals(e.getUserByUserId(), id)) {
                     CartResponseDTO cartResponseDTO = new CartResponseDTO(e.getId(), e.getUserByUserId());
@@ -41,7 +41,7 @@ public class CartServiceImpl implements CartServiceInterface {
         ResponseDTO<CartResponseDTO> responseDTO = new ResponseDTO<>();
         responseDTO.setResponseCode(0);
         responseDTO.setData(cartResponseDTO);
-        if (utility.isTokenExpired(sessionData.getToken())) {
+        if (sessionData!=null && !sessionData.getToken().isEmpty() && Boolean.TRUE.equals(utility.isTokenExpired(sessionData.getToken()))) {
             responseDTO.setRefreshToken(utility.generateToken(sessionData.getUser()));
         }
         return responseDTO;

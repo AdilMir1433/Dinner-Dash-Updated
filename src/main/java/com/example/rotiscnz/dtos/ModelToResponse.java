@@ -5,6 +5,10 @@ import com.example.rotiscnz.entities.UserEntity;
 
 public class ModelToResponse {
 
+    private ModelToResponse(){
+
+    }
+
     public static UserResponseDTO parseUserToResponse(UserEntity user) {
         UserResponseDTO userResponseDTO = new UserResponseDTO();
         userResponseDTO.setId(user.getId());
@@ -12,7 +16,6 @@ public class ModelToResponse {
         userResponseDTO.setEmail(user.getEmail());
         userResponseDTO.setFullName(user.getFullName());
         userResponseDTO.setDisplayName(user.getFullName());
-        //userResponseDTO.setCartsById(user.getCartsById());
         return userResponseDTO;
     }
 }
