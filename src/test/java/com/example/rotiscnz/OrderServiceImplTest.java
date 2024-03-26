@@ -10,18 +10,14 @@ import com.example.rotiscnz.dtos.orderDTOs.*;
 import com.example.rotiscnz.dtos.ResponseDTO;
 import com.example.rotiscnz.entities.*;
 import com.example.rotiscnz.repositories.*;
-import com.example.rotiscnz.security.JWTUtility;
-import com.example.rotiscnz.utility.SessionData;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
-import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -35,10 +31,6 @@ public class OrderServiceImplTest {
     private OrderRepository orderRepository;
     @Spy
     private CartItemRepository cartItemRepository;
-    @Spy
-    private SessionData sessionData;
-    @Spy
-    private JWTUtility jwtUtility;
 
     @BeforeEach
     void setUp() {
@@ -59,14 +51,12 @@ public class OrderServiceImplTest {
         userEntity.setPassword("password");
         userEntity.setDisplayName("adilmir");
 
-        sessionData.setToken("eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJhZGlsLm1pckBkZXZzaW5jLmNvbSIsImlhdCI6MTY5NTc5NTk1OSwiZXhwIjoxNjk1ODgyMzU5fQ.nHC1i29vmwTy2EIiv8OwqIagilUwkRbA09DD4fL_TF2VG87Lk76qHwb4qPI171y_Ofoe5dr57mOLyC4yUCl2Ng");
         // Mock the behavior of repositories and save methods
         when(orderRepository.save(any(OrderEntity.class))).thenAnswer(invocation -> {
             OrderEntity orderEntity = invocation.getArgument(0);
             orderEntity.setId(1L); // Simulate saving to the database
             return orderEntity;
         });
-        sessionData.setUser(userEntity);
 
         // Call the service method
         ResponseDTO<OrderResponseDTO> responseDTO = orderService.saveOrder(orderCreateDTO);
@@ -90,8 +80,6 @@ public class OrderServiceImplTest {
         when(orderRepository.findAllByCartID(userId)).thenReturn(orderEntities);
         when(cartItemRepository.findByOrderID(orderEntity.getId())).thenReturn(new ArrayList<>());
 
-        sessionData.setToken("eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJhZGlsLm1pckBkZXZzaW5jLmNvbSIsImlhdCI6MTY5NTc5NTk1OSwiZXhwIjoxNjk1ODgyMzU5fQ.nHC1i29vmwTy2EIiv8OwqIagilUwkRbA09DD4fL_TF2VG87Lk76qHwb4qPI171y_Ofoe5dr57mOLyC4yUCl2Ng");
-        sessionData.setUser(new UserEntity(userId, "adil.mir@devsinc.com","adilMir" , "Adil Mir", UserRole.CUSTOMER, "hehe"));
         ResponseDTO<List<OrderCompleteResponseDTO>> responseDTO = orderService.getOrderOfUser(userId);
 
         assertNotNull(responseDTO);
@@ -108,7 +96,6 @@ public class OrderServiceImplTest {
         List<OrderEntity> orderEntities = Arrays.asList(orderEntity);
 
         when(orderRepository.findAll()).thenReturn(orderEntities);
-        sessionData.setToken("eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJhZGlsLm1pckBkZXZzaW5jLmNvbSIsImlhdCI6MTY5NTc5NTk1OSwiZXhwIjoxNjk1ODgyMzU5fQ.nHC1i29vmwTy2EIiv8OwqIagilUwkRbA09DD4fL_TF2VG87Lk76qHwb4qPI171y_Ofoe5dr57mOLyC4yUCl2Ng");
 
         ResponseDTO<List<OrderResponseDTO>> responseDTO = orderService.getAllOrders();
 

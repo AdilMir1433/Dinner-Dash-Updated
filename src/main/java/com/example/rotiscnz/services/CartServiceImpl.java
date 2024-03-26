@@ -5,9 +5,7 @@ import com.example.rotiscnz.dtos.cartDTOs.CartMapperDTO;
 import com.example.rotiscnz.dtos.cartDTOs.CartResponseDTO;
 import com.example.rotiscnz.entities.CartEntity;
 import com.example.rotiscnz.repositories.CartRepository;
-import com.example.rotiscnz.security.JWTUtility;
 import com.example.rotiscnz.serviceinterfaces.CartServiceInterface;
-import com.example.rotiscnz.utility.SessionData;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -18,8 +16,6 @@ import java.util.Objects;
 @RequiredArgsConstructor
 public class CartServiceImpl implements CartServiceInterface {
     private final CartRepository repository;
-    private final SessionData sessionData;
-    private final JWTUtility utility;
 
     @Override
     public ResponseDTO<CartResponseDTO> createCart(Long id) {
@@ -41,9 +37,6 @@ public class CartServiceImpl implements CartServiceInterface {
         ResponseDTO<CartResponseDTO> responseDTO = new ResponseDTO<>();
         responseDTO.setResponseCode(0);
         responseDTO.setData(cartResponseDTO);
-        if (sessionData!=null && !sessionData.getToken().isEmpty() && Boolean.TRUE.equals(utility.isTokenExpired(sessionData.getToken()))) {
-            responseDTO.setRefreshToken(utility.generateToken(sessionData.getUser()));
-        }
         return responseDTO;
     }
 }

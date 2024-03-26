@@ -8,12 +8,9 @@ import com.example.rotiscnz.dtos.ResponseDTO;
 import com.example.rotiscnz.dtos.categoryDTOs.CategoryListDTO;
 import com.example.rotiscnz.entities.CategoryEntity;
 import com.example.rotiscnz.entities.ItemEntity;
-import com.example.rotiscnz.mappers.ItemMapper;
 import com.example.rotiscnz.repositories.CategoryRepository;
 import com.example.rotiscnz.repositories.ItemRepository;
-import com.example.rotiscnz.security.JWTUtility;
 import com.example.rotiscnz.serviceinterfaces.ItemServiceInterface;
-import com.example.rotiscnz.utility.SessionData;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.transaction.Transactional;
@@ -30,8 +27,6 @@ public class ItemServiceImpl extends BaseService implements ItemServiceInterface
     private final ItemRepository itemRepository;
     private final CategoryRepository categoryRepository;
     private final ObjectMapper objectMapper;
-    private final SessionData sessionData;
-    private final JWTUtility utility;
 
     @Override
     @Transactional
@@ -47,18 +42,12 @@ public class ItemServiceImpl extends BaseService implements ItemServiceInterface
             ResponseDTO<ItemResponseDTO> responseDTO = new ResponseDTO<>();
             responseDTO.setData(itemResponseDTO);
             responseDTO.setResponseCode(0);
-            if (sessionData!=null && !sessionData.getToken().isEmpty() && Boolean.TRUE.equals(utility.isTokenExpired(sessionData.getToken()))) {
-                responseDTO.setRefreshToken(utility.generateToken(sessionData.getUser()));
-            }
             return responseDTO;
         } catch (JsonProcessingException ex) {
             ResponseDTO<ItemResponseDTO> responseDTO = new ResponseDTO<>();
             responseDTO.setData(null);
             responseDTO.setErrorMessage("Error saving item");
             responseDTO.setResponseCode(-1);
-            if (sessionData!=null && !sessionData.getToken().isEmpty() && Boolean.TRUE.equals(utility.isTokenExpired(sessionData.getToken()))) {
-                responseDTO.setRefreshToken(utility.generateToken(sessionData.getUser()));
-            }
             return responseDTO;
         }
     }
@@ -81,18 +70,12 @@ public class ItemServiceImpl extends BaseService implements ItemServiceInterface
             ResponseDTO<ItemListResponseDTO> responseDTO = new ResponseDTO<>();
             ItemListResponseDTO itemListResponseDTO = new ItemListResponseDTO(itemResponseDTOS);
             responseDTO.setData(itemListResponseDTO);
-            if (sessionData!=null && !sessionData.getToken().isEmpty() && Boolean.TRUE.equals(utility.isTokenExpired(sessionData.getToken()))) {
-                responseDTO.setRefreshToken(utility.generateToken(sessionData.getUser()));
-            }
             responseDTO.setResponseCode(0);
             return responseDTO;
         } catch (JsonProcessingException ex) {
             ResponseDTO<ItemListResponseDTO> responseDTO = new ResponseDTO<>();
             responseDTO.setData(null);
             responseDTO.setResponseCode(-1);
-            if (sessionData!=null && !sessionData.getToken().isEmpty() && Boolean.TRUE.equals(utility.isTokenExpired(sessionData.getToken()))) {
-                responseDTO.setRefreshToken(utility.generateToken(sessionData.getUser()));
-            }
             return responseDTO;
         }
     }
@@ -105,14 +88,31 @@ public class ItemServiceImpl extends BaseService implements ItemServiceInterface
             ItemResponseDTO itemResponseDTO = ItemMapperDTO.toItemResponseDTOFromItemEntity(item.get());
             responseDTO.setData(itemResponseDTO);
             responseDTO.setResponseCode(0);
-            if (sessionData!=null && !sessionData.getToken().isEmpty() && Boolean.TRUE.equals(utility.isTokenExpired(sessionData.getToken()))){
-                responseDTO.setRefreshToken(utility.generateToken(sessionData.getUser()));
-            }
             return responseDTO;
         }
         responseDTO.setResponseCode(-1);
         responseDTO.setErrorMessage("Item Not Found");
         return responseDTO;
     }
+
+    @Override
+    public ResponseDTO<ItemResponseDTO> updateItem(ItemCreateDTO itemCreateDTO) {
+        Optional<ItemEntity> item =  itemRepository.findByTitle(itemCreateDTO.getTitle());
+        ResponseDTO<ItemResponseDTO> responseDTO= new ResponseDTO<>();
+        if(item.isPresent()){
+            ItemEntity itemEntity = item.get();
+            itemEntity.setItemPhoto(itemCreateDTO.getItemPhoto());
+            itemEntity.setTitle(itemCreateDTO.getTitle());
+            itemEntity.setDescription(itemCreateDTO.getDescription());
+            ItemResponseDTO itemResponseDTO = ItemMapperDTO.toItemResponseDTOFromItemEntity(itemEntity);
+            responseDTO.setData(itemResponseDTO);
+            responseDTO.setResponseCode(0);
+            return responseDTO;
+        }
+        responseDTO.setResponseCode(-1);
+        responseDTO.setErrorMessage("Item Not Found");
+        return responseDTO;
+    }
+
 
 }

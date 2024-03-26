@@ -9,4 +9,6 @@ public interface ItemServiceInterface {
     ResponseDTO<ItemResponseDTO> save(ItemCreateDTO item);
     ResponseDTO<ItemListResponseDTO> getAllItems();
     ResponseDTO<ItemResponseDTO> getItem(Long id);
+
+    ResponseDTO<ItemResponseDTO> updateItem(ItemCreateDTO itemCreateDTO);
 }

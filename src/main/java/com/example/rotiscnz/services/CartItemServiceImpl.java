@@ -9,9 +9,7 @@ import com.example.rotiscnz.dtos.orderDTOs.OrderResponseDTO;
 import com.example.rotiscnz.entities.CartItemEntity;
 import com.example.rotiscnz.enums.OrderType;
 import com.example.rotiscnz.repositories.CartItemRepository;
-import com.example.rotiscnz.security.JWTUtility;
 import com.example.rotiscnz.serviceinterfaces.CartItemServiceInterface;
-import com.example.rotiscnz.utility.SessionData;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -25,8 +23,7 @@ import java.util.Objects;
 public class CartItemServiceImpl implements CartItemServiceInterface {
     private final CartItemRepository repository;
     private final OrderServiceImpl orderServiceImpl;
-    private final SessionData sessionData;
-    private final JWTUtility utility;
+
 
     @Override
     public ResponseDTO<CartItemResponseDTO> addItemToCart(CartItemCreateDTO cartItemCreateDTO) {
@@ -42,9 +39,6 @@ public class CartItemServiceImpl implements CartItemServiceInterface {
         ResponseDTO<CartItemResponseDTO> responseDTO = new ResponseDTO<>();
         responseDTO.setResponseCode(0);
         responseDTO.setData(null);
-        if (sessionData!=null && !sessionData.getToken().isEmpty() && Boolean.TRUE.equals(utility.isTokenExpired(sessionData.getToken()))) {
-            responseDTO.setRefreshToken(utility.generateToken(sessionData.getUser()));
-        }
         return responseDTO;
     }
 
@@ -59,9 +53,29 @@ public class CartItemServiceImpl implements CartItemServiceInterface {
         ResponseDTO<List<CartItemResponseDTO>> responseDTO = new ResponseDTO<>();
         responseDTO.setData(cartItemResponseDTOS);
         responseDTO.setResponseCode(0);
-        if (sessionData!=null && !sessionData.getToken().isEmpty() && Boolean.TRUE.equals(utility.isTokenExpired(sessionData.getToken()))) {
-            responseDTO.setRefreshToken(utility.generateToken(sessionData.getUser()));
-        }
+        return responseDTO;
+    }
+
+    public ResponseDTO<CartItemResponseDTO> addItemToTheCart(CartItemCreateDTO cartItemCreateDTO) {
+        ResponseDTO<CartItemResponseDTO> responseDTO = new ResponseDTO<>();
+        CartItemResponseDTO cartItemResponseDTO = new CartItemResponseDTO();
+        cartItemResponseDTO.setCartByCartId(cartItemCreateDTO.getCartByCartId());
+        cartItemResponseDTO.setItemByItemId(1L);
+        cartItemResponseDTO.setOrderID(1L);
+        cartItemResponseDTO.setId(cartItemCreateDTO.getCartByCartId());
+        responseDTO.setData(cartItemResponseDTO);
+        responseDTO.setResponseCode(0);
+        return responseDTO;
+    }
+
+    //Hehe Boi
+    public ResponseDTO<Boolean> removeItemFromCart(Long ItemId, Long cartId){
+        ResponseDTO<Boolean> responseDTO = new ResponseDTO<>();
+        CartItemEntity cartItemEntity = new CartItemEntity();
+        cartItemEntity.setCartByCartId(cartId);
+        repository.delete(cartItemEntity);
+        responseDTO.setData(true);
+        responseDTO.setResponseCode(0);
         return responseDTO;
     }
 }

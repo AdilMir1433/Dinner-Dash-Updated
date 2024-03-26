@@ -12,9 +12,7 @@ import com.example.rotiscnz.entities.OrderEntity;
 import com.example.rotiscnz.repositories.CartItemRepository;
 import com.example.rotiscnz.repositories.ItemRepository;
 import com.example.rotiscnz.repositories.OrderRepository;
-import com.example.rotiscnz.security.JWTUtility;
 import com.example.rotiscnz.serviceinterfaces.OrderServiceInterface;
-import com.example.rotiscnz.utility.SessionData;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -27,8 +25,6 @@ public class OrderServiceImpl implements OrderServiceInterface {
     private final OrderRepository repository;
     private final CartItemRepository cartItemRepository;
     private final ItemRepository itemRepository;
-    private final SessionData sessionData;
-    private final JWTUtility utility;
 
     @Override
     public ResponseDTO<OrderResponseDTO> saveOrder(OrderCreateDTO orderCreateDTO){
@@ -37,9 +33,6 @@ public class OrderServiceImpl implements OrderServiceInterface {
         OrderResponseDTO orderResponseDTO = OrderMapperDTO.toOrderResponseDTOFromOrderEntity(orderEntity);
         ResponseDTO<OrderResponseDTO> responseDTO = new ResponseDTO<>();
         responseDTO.setData(orderResponseDTO);
-        if (sessionData!=null &&!sessionData.getToken().isEmpty() && Boolean.TRUE.equals(utility.isTokenExpired(sessionData.getToken()))) {
-            responseDTO.setRefreshToken(utility.generateToken(sessionData.getUser()));
-        }
         return responseDTO;
     }
 
@@ -65,9 +58,6 @@ public class OrderServiceImpl implements OrderServiceInterface {
         ResponseDTO<List<OrderCompleteResponseDTO>> responseDTO = new ResponseDTO<>();
         responseDTO.setData(orderCompleteResponseDTO);
         responseDTO.setResponseCode(0);
-        if (sessionData!=null && !sessionData.getToken().isEmpty() && Boolean.TRUE.equals(utility.isTokenExpired(sessionData.getToken()))) {
-            responseDTO.setRefreshToken(utility.generateToken(sessionData.getUser()));
-        }
         return responseDTO;
     }
 
@@ -81,9 +71,6 @@ public class OrderServiceImpl implements OrderServiceInterface {
         ResponseDTO<List<OrderResponseDTO>> responseDTO = new ResponseDTO<>();
         responseDTO.setData(orderResponseDTOS);
         responseDTO.setResponseCode(0);
-        if (sessionData!=null && !sessionData.getToken().isEmpty() && Boolean.TRUE.equals(utility.isTokenExpired(sessionData.getToken()))) {
-            responseDTO.setRefreshToken(utility.generateToken(sessionData.getUser()));
-        }
         return responseDTO;
     }
 

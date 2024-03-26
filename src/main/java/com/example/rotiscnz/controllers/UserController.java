@@ -34,4 +34,9 @@ public class UserController {
         return userService.signUp(userSignUpDTO);
     }
 
+    @PostMapping("/admin-signup")
+    public ResponseDTO<UserResponseDTO> adminSignUp(@RequestBody UserSignUpDTO userSignUpDTO){
+        return userService.adminSignUp(userSignUpDTO);
+    }
+
 }

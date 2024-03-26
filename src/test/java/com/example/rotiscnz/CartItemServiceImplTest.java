@@ -10,10 +10,9 @@ import com.example.rotiscnz.entities.OrderEntity;
 import com.example.rotiscnz.enums.OrderType;
 import com.example.rotiscnz.repositories.CartItemRepository;
 import com.example.rotiscnz.repositories.OrderRepository;
-import com.example.rotiscnz.security.JWTUtility;
+import com.example.rotiscnz.serviceinterfaces.OrderServiceInterface;
 import com.example.rotiscnz.services.CartItemServiceImpl;
 import com.example.rotiscnz.services.OrderServiceImpl;
-import com.example.rotiscnz.utility.SessionData;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -26,7 +25,6 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
-
 @ExtendWith(MockitoExtension.class)
 public class CartItemServiceImplTest {
 
@@ -36,17 +34,6 @@ public class CartItemServiceImplTest {
     @Spy
     private CartItemRepository cartItemRepository;
 
-    @Spy
-    private OrderRepository orderRepository;
-
-    @InjectMocks
-    private OrderServiceImpl orderServiceImpl;
-
-    @Spy
-    private SessionData sessionData;
-
-    @Spy
-    private JWTUtility jwtUtility;
 
     @BeforeEach
     public void setUp() {
@@ -64,7 +51,6 @@ public class CartItemServiceImplTest {
         List<CartItemEntity> cartItemEntities = new ArrayList<>();
         cartItemEntities.add(cartItemEntity1);
         cartItemEntities.add(cartItemEntity2);
-        sessionData.setToken("eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJhZGlsLm1pckBkZXZzaW5jLmNvbSIsImlhdCI6MTY5NTc5NTk1OSwiZXhwIjoxNjk1ODgyMzU5fQ.nHC1i29vmwTy2EIiv8OwqIagilUwkRbA09DD4fL_TF2VG87Lk76qHwb4qPI171y_Ofoe5dr57mOLyC4yUCl2Ng");
 
         when(cartItemRepository.findAll()).thenReturn(cartItemEntities);
 
@@ -79,5 +65,49 @@ public class CartItemServiceImplTest {
 
         // Verify interactions with mocked dependencies
         verify(cartItemRepository, times(1)).findAll();
+    }
+
+    @Test
+    void testAddItemToCart() {
+        // Prepare test data
+        CartItemCreateDTO cartItemCreateDTO = new CartItemCreateDTO();
+        cartItemCreateDTO.setCartByCartId(1L);
+
+        CartItemEntity cartItemEntity = new CartItemEntity();
+        cartItemEntity.setId(1L);
+        cartItemEntity.setCartByCartId(1L);
+
+        // Mock the behavior of dependencies
+
+        // Call the service method
+        ResponseDTO<CartItemResponseDTO> responseDTO = cartItemService.addItemToTheCart(cartItemCreateDTO);
+
+        // Assertions
+        assertNotNull(responseDTO);
+        assertEquals(0, responseDTO.getResponseCode());
+        assertNotNull(responseDTO.getData());
+        assertEquals(cartItemEntity.getId(), responseDTO.getData().getId());
+    }
+
+    @Test
+    void testRemoveItemToCart() {
+        // Prepare test data
+        CartItemCreateDTO cartItemCreateDTO = new CartItemCreateDTO();
+        cartItemCreateDTO.setCartByCartId(1L);
+
+        CartItemEntity cartItemEntity = new CartItemEntity();
+        cartItemEntity.setId(1L);
+        cartItemEntity.setCartByCartId(1L);
+
+        // Mock the behavior of dependencies
+
+        // Call the service method
+        ResponseDTO<Boolean> responseDTO = cartItemService.removeItemFromCart(1L, 1L);
+
+        // Assertions
+        assertNotNull(responseDTO);
+        assertEquals(0, responseDTO.getResponseCode());
+        assertNotNull(responseDTO.getData());
+        assertEquals(true, responseDTO.getData());
     }
 }
